@@ -7,11 +7,24 @@ use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
 class WhatsAppService
 {
-   function getMessage(){
+    protected $url;
+    protected $token;
+
+    public function __construct($url,$token) {
+        $this->url = $url;
+        $this->token=$token;
+    }
+
+   public function createUrl() {
+        return $this->url . '?token=' . $this->token;
+    }
+
+
+   public function getMessage(){
    	try {
     	$client=new Client();
 
-    	$response = $client->request('GET', 'https://api.chat-api.com/instance120137/messages?token=crgsufxtpkppv7a0',
+    	$response = $client->request('GET',$this->createUrl() ,
     		['auth' => [
     		'roula.rohban@gmail.com' , '123456789'
     	]] 
@@ -36,6 +49,7 @@ class WhatsAppService
      catch(Exception $e) {
         echo "Error: " . $e->getMessage();
     }
+    //return $this->config['url'] . $method . '?token=' . $this->config['token'];
 
     }
 
@@ -58,7 +72,7 @@ class WhatsAppService
         $sender = new Client();
         try {
             $res = $sender->request(
-                'POST', 'https://api.chat-api.com/instance120137/sendMessage?token=crgsufxtpkppv7a0',
+                'POST', $this->createUrl(),
                 ['verify' => false, 'json' => $request->all()]
             );
         } catch (GuzzleException $e) {
