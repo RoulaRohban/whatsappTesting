@@ -17,4 +17,5 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+//Route::get('/recieveMessage','GuzzleController@getMessage');
 //Route::post('/sendMessage','GuzzleController@sendMessage');

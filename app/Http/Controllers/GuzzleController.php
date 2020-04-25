@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
-
+//use GuzzleHttp\Psr7\Response;
 class GuzzleController extends Controller
 {
    function getMessage(){
@@ -48,53 +48,34 @@ class GuzzleController extends Controller
 
     }
 
-	public function sendMessage(Request $request)
-	{
-//     	$client=new Client([
-//     		'base_uri' => 'https://api.chat-api.com/instance120137/messages?token=crgsufxtpkppv7a0',
-//     		'headers'=> [
-//     		'content-type' => 'applicatio/json',
-//     		'Accept' => 'application/json',
-//     	    'X-CSRF-Token' => csrf_token()
-//     	 ]
-//     	]);
-//     $response = $client->post(
-//     'https://api.chat-api.com/instance120137/sendMessage?token=crgsufxtpkppv7a0',
-//     [
-//         'json' => 
-//         ['chatId'    => $request->chatId,
-//           //'phone'  => null,
-//          'body'      => $request->body ]
-//     ],
-//     ['Content-Type' => 'application/x-www-form-urlencoded']
-// );
-//         try {
-//        //$response = $request->send();
-//        //dd($response);
-//         	$responseJSON = json_decode($response->getBody(), true);
-//             } 
-// 		catch (Guzzle\Http\Exception\BadResponseException $e) {
-//    			 echo 'Uh oh!: ' . $e->getMessage();
-// 			}
+	public function sendMessage(Request $request) {
 
-			$headers =  [
-                'content-type' => 'application/json',
-                'verify' => true,
-                'X-CSRF-TOKEN' => csrf_token()
-            ];
+		//dd($request->all());
 
-            $guzzleClient = new \GuzzleHttp\Client();
-            $url = 'https://api.chat-api.com/instance120137/sendMessage?token=crgsufxtpkppv7a0';
+        if (!isset($request->chatId) && !isset($request->phone)) {
+            return 'phone or chatId not set in params';
+        }
 
-            $requestBody['chatId'] = $request->chatId;
-            $requestBody['body'] = $request->body;
-//            $requestBody['Accept'] = 'application/json';  // Do I need this parameter ?
-			 $request = $guzzleClient->post( $url,  [
-                "headers" => $headers,             // Do I need these params ?
-                'form_params' => $requestBody  //  ERROR REFERING THIS LINE
-            ]);
-			 $request->headers->set('X-CSRF-TOKEN', csrf_token());
-            $response = $request->send();		
-	 }
+        if (isset($request->chatId) && isset($request->phone)) {
+            return 'Require only phone OR chatId';
+        }
+
+        if (!isset($request->body)) {
+            return 'body not set in params';
+        }
+
+        $sender = new Client();
+        try {
+            $res = $sender->request(
+                'POST', 'https://api.chat-api.com/instance120137/sendMessage?token=crgsufxtpkppv7a0',
+                ['verify' => false, 'json' => $request->all()]
+            );
+        } catch (GuzzleException $e) {
+            throw new \Exception('Request error');
+        }
+
+        //return json_decode($res->getBody());
+        response()->json($res->getBody()->getContents());
+    }
 
 }
