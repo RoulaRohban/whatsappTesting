@@ -16,7 +16,7 @@ Route::get('/', function () {
 });
 
 
-Route::get('/recieveMessage','GuzzleController@getMessage');
+Route::get('/recieveMessage','WhatsAppController@getMessage');
 
-Route::post('/sendMessage','GuzzleController@sendMessage');
+Route::post('/sendMessage','WhatsAppController@sendMessage');
 //Route::get('/test','GuzzleController@testing');

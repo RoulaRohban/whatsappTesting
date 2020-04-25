@@ -1,24 +1,15 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\helper;
 
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
-//use GuzzleHttp\Psr7\Response;
-class GuzzleController extends Controller
+class WhatsAppService
 {
    function getMessage(){
-
-
    	try {
-    	$client=new Client([
-    		'base_uri' => 'https://api.chat-api.com/instance120137/messages?token=crgsufxtpkppv7a0',
-    		'headers'=> [
-    		'content-type' => 'applicatio/json',
-    		'Accept' => 'application/json'],
-    	]);
-
+    	$client=new Client();
 
     	$response = $client->request('GET', 'https://api.chat-api.com/instance120137/messages?token=crgsufxtpkppv7a0',
     		['auth' => [
@@ -26,9 +17,9 @@ class GuzzleController extends Controller
     	]] 
     ,
     [           'query' => [
-                'lastMessageNumber' => 32,
-                'last' => false,
-                'chatId' => '17633123456@c.us',
+                'lastMessageNumber' => 10,
+                //'last' => false,
+                'chatId' => '17680561234-1479621234@g.us',
                 'limit' => 100 ,
                 'min_time' => 946684800, 
                 'max_time' => 946684800
@@ -71,11 +62,17 @@ class GuzzleController extends Controller
                 ['verify' => false, 'json' => $request->all()]
             );
         } catch (GuzzleException $e) {
-            throw new \Exception('Request error');
+            echo "Error: " . $e->getMessage();
         }
 
         //return json_decode($res->getBody());
-        response()->json($res->getBody()->getContents());
+
+        // if($res->getStatusCode() == 200) {
+        //    return response()->json(['status'=>'success','Message'=>'Done Send','data'=>$res->getBody()->getContents()],200);
+
+        // }
+        
+
     }
 
 }
